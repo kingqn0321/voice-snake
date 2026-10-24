@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#148451">
+  <title>声控贪吃蛇 · 语音验证</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <a class="brand" href="/" aria-label="声控贪吃蛇首页"><img src="/signal.svg" width="36" height="36" alt="">声控贪吃蛇</a>
+    <span class="edition">开发验证 / 01</span>
+  </header>
+  <main>
+    <section class="heading">
+      <div><p class="eyebrow">VOICE INPUT</p><h1>语音验证台</h1></div>
+      <span class="badge">非游戏 · 实验版本</span>
+    </section>
+    <div class="workspace">
+      <section class="signal" aria-label="指令反馈">
+        <div class="signal-head"><span>指令信号</span><span id="state" class="badge">待启动</span></div>
+        <div class="compass" aria-label="方向反馈">
+          <span class="north" data-direction="UP">↑</span>
+          <span class="west" data-direction="LEFT">←</span>
+          <img src="/signal.svg" class="center" alt="语音输入标记" width="64" height="64">
+          <span class="east" data-direction="RIGHT">→</span>
+          <span class="south" data-direction="DOWN">↓</span>
+        </div>
+        <div class="last-command" aria-live="polite"><span>最近接受</span><strong id="command">—</strong></div>
+      </section>
+      <section class="controls" aria-label="识别状态">
+        <h2>麦克风</h2>
+        <div class="status-line"><span class="dot" id="dot"></span><strong id="voice-status" role="status">未启动</strong></div>
+        <button id="start" type="button"><span aria-hidden="true">●</span> 启动验证</button>
+        <p id="notice" role="status">音频可能由浏览器厂商在线处理，日志仅保留在本页内存。</p>
+        <dl><div><dt>识别语言</dt><dd>普通话 / zh-CN</dd></div><div><dt>结果策略</dt><dd>最终结果执行</dd></div><div><dt>中间结果</dt><dd id="interim">—</dd></div></dl>
+        <details><summary>文本调试</summary>
+          <form id="debug"><label for="sample">模拟识别文本</label><div class="sample-row"><input id="sample" autocomplete="off" placeholder="例如：向上" maxlength="100"><button type="submit" aria-label="执行模拟文本" title="执行模拟文本">→</button></div></form>
+          <button id="simulate-over" class="secondary" type="button">模拟结算</button>
+        </details>
+      </section>
+    </div>
+    <section class="records">
+      <div class="records-heading"><h2>识别记录</h2><span id="count">0 条</span></div>
+      <div class="table-wrap"><table><thead><tr><th scope="col">时间 / 来源</th><th scope="col">识别文本</th><th scope="col">命令</th><th scope="col">处理结果</th></tr></thead><tbody id="records"><tr id="empty"><td colspan="4">暂无记录</td></tr></tbody></table></div>
+    </section>
+  </main>
+  <footer><span>2026 · Voice Snake</span><span>本地实验 / 不保存音频</span></footer>
+  <script type="module" src="/app.mjs"></script>
+</body>
+</html>
