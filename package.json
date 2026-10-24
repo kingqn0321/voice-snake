@@ -1,0 +1,22 @@
+{
+  "name": "voice-snake",
+  "version": "0.2.0",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "setup:voice": "node tools/prepare-model.cjs",
+    "start": "node tools/serve.cjs",
+    "test": "node tests/commands.test.mjs && node tests/game.test.mjs && node tests/session.test.mjs && node tests/local-voice.test.mjs && node tests/model-profile.test.cjs && node tests/audio-capture.test.cjs",
+    "test:local-model": "node tests/local-model.test.cjs",
+    "test:browser": "node tests/browser.test.cjs"
+  },
+  "dependencies": {
+    "fflate": "0.8.3",
+    "kontra": "10.0.2",
+    "lucide-static": "0.468.0",
+    "tar": "7.5.22",
+    "vosk-browser": "0.0.8"
+  }
+}

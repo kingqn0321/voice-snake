@@ -107,6 +107,17 @@ test('unexpected end and network errors stop without retry', () => {
   assert.deepStrictEqual(f.failures, ['disconnected', 'network']);
   assert.strictEqual(f.voice.active, null);
 });
+test('removed interim recognition entries invalidate their candidates', () => {
+  const f = fixture(FakeRecognition); f.voice.start();
+  const r = FakeRecognition.last;
+  const result = [{ transcript: '上' }]; result.isFinal = false;
+  r.onresult({ resultIndex: 0, results: [result] });
+  r.onresult({ resultIndex: 0, results: [] });
+  assert.equal(f.texts[1].text, '');
+  assert.equal(f.texts[1].isFinal, false);
+  assert.equal(f.texts[1].resultId, f.texts[0].resultId);
+  f.voice.stop();
+});
 test('synchronous recognition start errors are recoverable', () => {
   class Broken extends FakeRecognition { start() { throw new Error('failed'); } }
   const f = fixture(Broken);

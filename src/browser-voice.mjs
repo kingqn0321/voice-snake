@@ -24,6 +24,7 @@ export class BrowserVoice {
       return false;
     }
     const session = ++this.sequence;
+    let resultCount = 0;
     const fail = (reason) => {
       if (this.active !== recognition) return;
       this.stop();
@@ -39,6 +40,11 @@ export class BrowserVoice {
     };
     recognition.onresult = (event) => {
       if (this.active !== recognition) return;
+      // Interim entries may be removed entirely, not just replaced with new text.
+      for (let i = event.results.length; i < resultCount; i += 1) {
+        this.onText({ text: '', resultId: `${session}:${i}`, receivedAt: this.now(), isFinal: false });
+      }
+      resultCount = event.results.length;
       for (let i = event.resultIndex; i < event.results.length; i += 1) {
         if (this.active !== recognition) break;
         const result = event.results[i];
