@@ -1,0 +1,16 @@
+const assert = require('node:assert/strict');
+const { profileName, tuneModelConfig } = require('../tools/voice-profile.cjs');
+const source = '--beam=12.0\n--frame-subsampling-factor=3\n--endpoint.rule2.min-trailing-silence=0.5\n';
+const tuned = tuneModelConfig(source);
+assert.equal(profileName, 'fast-v1');
+assert.ok(tuned.includes('--frames-per-chunk=6\n'));
+assert.ok(tuned.includes('--beam=12.0\n'));
+assert.ok(tuned.includes('--endpoint.rule2.min-trailing-silence=0.5\n'));
+console.log('PASS model profile reduces chunk size without changing beam or endpoint rules');
+assert.equal(tuneModelConfig(tuneModelConfig(source)), tuned);
+assert.equal(tuneModelConfig(source + '--frames-per-chunk=24\n'), tuned);
+console.log('PASS repeated profile preparation replaces rather than duplicates options');
+assert.throws(() => tuneModelConfig(''), /subsampling/);
+assert.throws(() => tuneModelConfig('--frame-subsampling-factor=1\n'), /subsampling/);
+console.log('PASS incompatible model configurations are rejected');
+console.log('\n3 model profile tests passed.');
