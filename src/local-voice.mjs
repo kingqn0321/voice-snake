@@ -23,7 +23,7 @@ export class LocalVoice {
   loadModel() {
     if (!this.modelPromise) {
       this.modelPromise = new Promise((resolve, reject) => {
-        const model = new this.Vosk.Model('/models/chinese-fast-v1.tar.gz', -1);
+        const model = new this.Vosk.Model(new URL('../models/chinese-fast-v1.tar.gz', import.meta.url).href, -1);
         const timer = setTimeout(() => {
           model.terminate();
           reject(new Error('model_timeout'));
@@ -66,7 +66,7 @@ export class LocalVoice {
       } });
       if (this.active !== active) { stream.getTracks().forEach(track => track.stop()); return false; }
       active.stream = stream;
-      await active.context.audioWorklet.addModule('/audio-capture.mjs');
+      await active.context.audioWorklet.addModule(new URL('../audio-capture.mjs', import.meta.url).href);
       if (this.active !== active) return false;
       const recognizer = active.recognizer = new model.KaldiRecognizer(active.context.sampleRate, grammar);
       let utterance = 0, lastPartial = '', speaking = false, silenceMs = 0;
