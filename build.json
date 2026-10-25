@@ -1,0 +1,9 @@
+{
+  "commit": "3ecc9a0bf550f4910d446913e5c9a22c87b7758d",
+  "sourceState": "",
+  "builtAt": "2026-10-25T03:22:11.127Z",
+  "kind": "release-candidate",
+  "model": "vosk-model-small-cn-0.22-fast-v1",
+  "realMicrophone": "not_verified",
+  "macOS": "not_verified"
+}

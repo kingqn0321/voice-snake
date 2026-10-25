@@ -1,0 +1,3 @@
+vosk-model-small-cn-0.22: Apache-2.0. Publisher: Alpha Cephei.
+Source: https://alphacephei.com/vosk/models/vosk-model-small-cn-0.22.zip
+Weights unchanged; frames-per-chunk=6. Apache-2.0 text: vosk-browser-COPYING.txt
