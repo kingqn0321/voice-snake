@@ -1,6 +1,6 @@
 # 灵矽 Realtime 运行与联调
 
-当前实现使用浏览器直连灵矽 WSS。项目 Node 服务仅代用长期 API key 申请临时凭证，玩家点击开始即可连接，无需填写凭证。页面默认使用原有本地识别；玩家手动选择“灵矽 Realtime”后才申请临时凭证。新增路径已通过自动与模拟浏览器检查；真实服务地址、凭证及真人效果仍待联调，原有 Vosk 验收结论不能代替灵矽结果。
+当前实现使用浏览器直连灵矽 WSS。页面默认使用原有本地识别；玩家手动选择“灵矽 Realtime”后自动申请临时凭证。
 
 ## 本机启动
 
@@ -43,7 +43,9 @@ npm start
 - 代理先认证访问者，删除客户端传入的 `X-Voice-Snake-Proxy-Token`，再注入自己的同名头；Node 验证该头及 Origin。
 - 配置公开 origin 后，凭证接口不再接受本机 origin 旁路。Node 仍只监听回环地址；不要暴露后端端口绕过代理。
 
-当前没有新增账号系统。缺少已认证代理时，仅作本机使用，不应把匿名凭证签发接口暴露公网。CORS 不代替认证。GitHub Pages 可以提供静态资源，但不能执行凭证接口；公开部署需要另部署受控 HTTPS 凭证服务。静态页面通过 `web/runtime-config.js` 配置凭证接口 URL，该文件只包含公开 URL，不包含 API key；默认值是同源 `./api/lingxi/session`，适用于本地 Node 服务。应用 CSP 只额外开放已配置的灵矽 WSS origin。
+如果暂时没有登录代理、但仍要让 GitHub Pages 直接申请凭证，可显式设置 `LINGXI_PUBLIC_ACCESS=true`。这会允许配置的 `LINGXI_ALLOWED_ORIGIN` 直接跨域调用，并返回 CORS 头；它不提供用户身份认证，只依赖固定 Origin、全局签发限额和灵矽额度保护。仅适合受控演示，不适合公开长期运营。默认值为关闭。
+
+当前没有新增账号系统。GitHub Pages 可以提供静态资源，但不能执行凭证接口；公开部署需要另部署 HTTPS 凭证服务。静态页面通过 `web/runtime-config.js` 配置凭证接口 URL，该文件只包含公开 URL，不包含 API key；默认值是同源 `./api/lingxi/session`，适用于本地 Node 服务。应用 CSP 只额外开放已配置的灵矽 WSS origin。若使用 `LINGXI_PUBLIC_ACCESS=true`，必须同时配置 `LINGXI_ALLOWED_ORIGIN=https://zhujingoy.github.io`，并接受匿名签发的安全边界。
 
 申请期限为 120 秒，握手使用返回的实际到期时间。建连前发现过期时最多申请两次。已经建立的连接不会根据凭证到期定时断开；真实断连后游戏暂停，用户恢复通道时申请新凭证，再说“继续”。临时凭证不是一次性票据，游戏后端也无法强制过滤直连事件；灵矽侧并发、额度及能力限制仍须由实际部署确认。
 

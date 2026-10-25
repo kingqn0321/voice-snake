@@ -19,7 +19,8 @@ function readConfig(env = process.env) {
       /[\r\n]/.test(env.LINGXI_API_KEY) || (env.LINGXI_MODEL && env.LINGXI_MODEL.length > 128)) {
     throw new Error('Invalid Lingxi URL or credential configuration');
   }
-  if (origin && (origin.protocol !== 'https:' || origin.pathname !== '/' || origin.username || origin.password || origin.search || origin.hash || !env.LINGXI_PROXY_SECRET)) {
+  const publicAccess = env.LINGXI_PUBLIC_ACCESS === 'true';
+  if (origin && (origin.protocol !== 'https:' || origin.pathname !== '/' || origin.username || origin.password || origin.search || origin.hash || (!publicAccess && !env.LINGXI_PROXY_SECRET))) {
     throw new Error('Public Lingxi access requires an HTTPS origin and authenticated proxy secret');
   }
   const session = { type: 'realtime', output_modalities: ['text'], audio: { input: {
@@ -34,7 +35,7 @@ function readConfig(env = process.env) {
   }
   return { key: env.LINGXI_API_KEY.trim(), mintURL: new URL('/v1/realtime/client_secrets', base).href,
     socketURL: socket.href, socketOrigin: socket.origin, session,
-    publicOrigin: origin?.origin, proxySecret: env.LINGXI_PROXY_SECRET || '' };
+    publicOrigin: origin?.origin, publicAccess, proxySecret: env.LINGXI_PROXY_SECRET || '' };
 }
 
 function equalSecret(value, expected) {
@@ -47,14 +48,23 @@ function allowedRequest(req, config) {
   try { origin = new URL(req.headers.origin); } catch { return false; }
   if (req.headers.origin !== origin.origin) return false;
   if (config?.publicOrigin) {
+    if (config.publicAccess) return config.publicOrigin === origin.origin;
     return config.publicOrigin === origin.origin && equalSecret(req.headers['x-voice-snake-proxy-token'], config.proxySecret);
   }
   return origin.protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(origin.hostname) &&
     Number(origin.port || 80) === req.socket.localPort && req.headers.host === origin.host;
 }
 
-function reply(res, status, data) {
+function setCors(req, res, config) {
+  if (config?.publicAccess && req.headers.origin === config.publicOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', config.publicOrigin);
+    res.setHeader('Vary', 'Origin');
+  }
+}
+
+function reply(req, res, status, data) {
   if (res.destroyed || res.writableEnded) return;
+  setCors(req, res, req.lingxiConfig);
   res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store',
     'X-Content-Type-Options': 'nosniff' });
   res.end(JSON.stringify(data));
@@ -81,8 +91,16 @@ function createSessionBroker({ config = readConfig(), fetchImpl = globalThis.fet
   timeoutMs = 10000, limit = 10 } = {}) {
   let windowAt = now(), issued = 0, pending = 0;
   return async function handle(req, res) {
-    const fail = (status, code) => reply(res, status, { error: { code } });
-    if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); fail(405, 'method_not_allowed'); return; }
+    req.lingxiConfig = config;
+    setCors(req, res, config);
+    const fail = (status, code) => reply(req, res, status, { error: { code } });
+    if (req.method === 'OPTIONS' && config?.publicAccess && req.headers.origin === config.publicOrigin) {
+      res.writeHead(204, { Allow: 'POST, OPTIONS', 'Access-Control-Allow-Origin': config.publicOrigin,
+        'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Max-Age': '600', Vary: 'Origin' });
+      res.end(); return;
+    }
+    if (req.method !== 'POST') { res.setHeader('Allow', config?.publicAccess ? 'POST, OPTIONS' : 'POST'); fail(405, 'method_not_allowed'); return; }
     if (!allowedRequest(req, config)) { fail(403, 'origin_not_allowed'); return; }
     if (!config) { fail(503, 'lingxi_not_configured'); return; }
     if (req.headers['content-type']?.split(';')[0].trim() !== 'application/json') { fail(415, 'json_required'); return; }
@@ -125,7 +143,7 @@ function createSessionBroker({ config = readConfig(), fetchImpl = globalThis.fet
           !Number.isFinite(data.expires_at) || data.expires_at * 1000 <= now() + 5000 || data.expires_at * 1000 > now() + 7205000) {
         fail(502, 'lingxi_invalid_response'); return;
       }
-      if (!controller.signal.aborted) reply(res, 200, { endpoint: config.socketURL,
+      if (!controller.signal.aborted) reply(req, res, 200, { endpoint: config.socketURL,
         credential: data.value, expiresAtMs: data.expires_at * 1000, session: config.session });
     } catch {
       if (!controller.signal.aborted) fail(502, 'lingxi_unavailable');

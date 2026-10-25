@@ -1,6 +1,6 @@
 # 灵矽 Realtime 直连接入设计
 
-日期：2026-10-25，Asia/Shanghai。状态：设计稿（待评审、未实施）。本文件描述目标方案，不代表已接入灵矽或已完成线上验证。当前实现仍以 [README](../README.md) 和 [架构设计](architecture.md) 为准。
+日期：2026-10-25，Asia/Shanghai。本文件描述可选灵矽 Realtime 接入方案。当前实现仍以 [README](../README.md) 和 [架构设计](architecture.md) 为准。
 
 ## 1. 决策与范围
 
