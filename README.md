@@ -8,6 +8,8 @@
 
 设计重点是短口令操作、明确的指令反馈和识别异常时的安全暂停。方向判断采用固定口令映射，不依赖大模型决策。
 
+试玩：[网页游戏](https://zhujingoy.github.io/voice-snake/)。下载：[v0.2.0-rc.1 候选运行包与合成预演](https://github.com/zhujingoy/voice-snake/releases/tag/v0.2.0-rc.1)。产物固定于 `3ecc9a0`，不是已完成真人或 macOS 验收的正式冻结版。
+
 ## 实现状态
 
 截至 2026-10-25：
@@ -86,6 +88,7 @@ npm test
 - [实机验收记录](docs/acceptance-record.md)及[60 条口令表](docs/acceptance-samples.csv)：四环境分别记录，当前未填入实测结果。
 - [Demo 脚本](docs/demo-script.md)与[交付清单](docs/release-checklist.md)：录制步骤、冻结前检查及交付登记。
 - [交付操作](docs/delivery-guide.md)：运行包、真人录屏、合成预演及打包校验。
+- [作品提交信息](docs/submission.md)：可用于比赛表单的作品介绍、入口及待补的实际提交记录。
 
 成员：朱晶、王任。分工详见开发计划。
 

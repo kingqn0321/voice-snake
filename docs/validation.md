@@ -103,6 +103,22 @@
 
 打包工具同时生成静态 ZIP 和含依赖/模型的离线 ZIP，并验证 SHA-256；候选开发包的 `sourceState` 标明未提交快照。正式发布产物要求从干净提交重新生成，以产物 `build.json` / `delivery.json` 的提交字段及发布记录为准。
 
+### 已发布候选核验
+
+候选 `v0.2.0-rc.1` 固定于干净提交 `3ecc9a0bf550f4910d446913e5c9a22c87b7758d`，`sourceState` 为空：
+
+- `test-results/clean-tkqocV/verification.json`：WSL Ubuntu-22.04 / Node.js v22.23.2，安装、91 项检查及模型首次下载准备通过。发布附件为去除本机绝对目录后的 `clean-install-verification.json`。
+- `test-results/delivery-554jGd/artifact-verification.json`：两个 ZIP 摘要通过，离线 ZIP 实际解压后 91 项检查通过，无网络安装。
+- 公网 https://zhujingoy.github.io/voice-snake/ 对应部署提交 `22a2d5b`，其 `build.json` 指向源码 `3ecc9a0`。Windows Chrome 实际加载真实模型、AudioWorklet、录屏启停、下载按钮和资源/窄屏布局通过，仍使用生成的 MediaStream；发布附件 `hosting-verification.json` 明确标注 `microphone: not_tested`。
+- 运行包和合成视频的匿名下载 HEAD 返回 200；ZIP 的发布端摘要与本地 SHA-256 一致。附件与视频位于 https://github.com/zhujingoy/voice-snake/releases/tag/v0.2.0-rc.1 。
+
+| 文件 | 大小（字节） | SHA-256 |
+| --- | --- | --- |
+| voice-snake-offline.zip | 56000139 | af5f87f99fa5693af03aacc44e0ca404923f04be96758289443d4bad8f4f6262 |
+| voice-snake-site.zip | 46858132 | 165a033c27ecde393bc7e2104614c21bec422cc21abcc1583938e6e384743aef |
+
+本候选未作为最终冻结版本，PR #4 仍待合并。后续文档记录与公网复测脚本更新不改变上述已发布运行包的源码版本。
+
 ## 环境矩阵（待执行）
 
 测试时填写完整操作系统版本、浏览器版本、麦克风、网络、识别提供方/配置和被测提交哈希。四个组合分别统计，不以合并结果替代单环境结果。

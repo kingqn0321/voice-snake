@@ -14,7 +14,7 @@ async function main() {
   const requestedPaths = [];
   const types = { '.html': 'text/html', '.mjs': 'text/javascript', '.js': 'text/javascript',
     '.css': 'text/css', '.svg': 'image/svg+xml', '.gz': 'application/gzip' };
-  server = http.createServer(async (request, response) => {
+  if (!process.env.HOSTED_URL) server = http.createServer(async (request, response) => {
     try {
       const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
       requestedPaths.push(pathname);
@@ -25,8 +25,8 @@ async function main() {
       createReadStream(file).pipe(response);
     } catch { response.writeHead(404); response.end(); }
   });
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  const url = `http://127.0.0.1:${server.address().port}${prefix}`;
+  if (server) await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const url = process.env.HOSTED_URL || `http://127.0.0.1:${server.address().port}${prefix}`;
   browser = await chromium.launch({ headless: true, args: ['--autoplay-policy=no-user-gesture-required'],
     ...(process.env.BROWSER_EXECUTABLE ? { executablePath: process.env.BROWSER_EXECUTABLE } : {}) });
   const page = await browser.newPage({ viewport: { width: 1440, height: 1050 } });
@@ -53,7 +53,7 @@ async function main() {
   assert.equal(await page.locator('#voice-status').textContent(), '正在监听', 'stopping the recorder preserves local recognition');
   assert.equal(await page.getByRole('button', { name: '下载录像', exact: true }).isEnabled(), true);
   assert.equal(await page.locator('#record-kind').textContent(), '麦克风录制 · 本地保存');
-  const output = path.join(root, 'test-results', 'hosting');
+  const output = path.join(root, 'test-results', process.env.HOSTED_URL ? 'hosting-live' : 'hosting');
   await fs.mkdir(output, { recursive: true });
   await page.screenshot({ path: path.join(output, 'desktop.png'), fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
@@ -61,13 +61,16 @@ async function main() {
   assert.ok(await page.locator('img').evaluateAll(images => images.every(img => img.complete && img.naturalWidth > 0)));
   await page.screenshot({ path: path.join(output, 'mobile.png'), fullPage: true });
   for (const suffix of ['src/local-voice.mjs', 'models/chinese-fast-v1.tar.gz', 'audio-capture.mjs', 'session-recorder.mjs']) {
-    assert.ok(requestedPaths.includes(prefix + suffix), suffix);
+    if (server) assert.ok(requestedPaths.includes(prefix + suffix), suffix);
+    else assert.equal((await page.request.head(new URL(suffix, url).href)).status(), 200, suffix);
   }
+  const build = await (await page.request.get(new URL('build.json', url).href)).json();
+  assert.equal(build.commit, delivery.commit);
   assert.deepEqual(failedRequests, []);
   assert.deepEqual(errors, []);
   await fs.writeFile(path.join(output, 'report.json'), JSON.stringify({
     browser: browser.version(), deliveryCommit: delivery.commit, sourceState: delivery.sourceState,
-    kind: 'synthetic_stream', microphone: 'not_tested', subpath: prefix,
+    kind: 'synthetic_stream', microphone: 'not_tested', subpath: prefix, url, publishedCommit: build.commit,
     localModelLoaded: true, recorderStartedAndStopped: true, downloadEnabled: true,
     screenshots: ['desktop.png', 'mobile.png'], errors, failedRequests,
   }, null, 2));
