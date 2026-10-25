@@ -4,11 +4,19 @@
 
 ## 作品定位
 
-参赛方向为“灵矽应用：语音类游戏”。“灵矽”仅为名称，不构成平台接入要求。网页承担棋盘展示、游戏规则和交互反馈；电脑麦克风的语音输入通过识别适配器转为标准命令，控制同一套游戏逻辑。
+参赛方向为“灵矽应用：语音类游戏”。网页承担棋盘展示、游戏规则和交互反馈；电脑麦克风的语音输入通过识别适配器转为标准命令，控制同一套游戏逻辑。
 
 设计重点是短口令操作、明确的指令反馈和识别异常时的安全暂停。方向判断采用固定口令映射，不依赖大模型决策。
 
-试玩：[网页游戏](https://zhujingoy.github.io/voice-snake/)。下载：[v0.2.0-rc.1 候选运行包与合成预演](https://github.com/zhujingoy/voice-snake/releases/tag/v0.2.0-rc.1)。产物固定于 `3ecc9a0`，不是已完成真人或 macOS 验收的正式冻结版。
+试玩：[网页游戏](https://zhujingoy.github.io/voice-snake/)。下载：[v0.2.0-rc.1 候选运行包与合成预演](https://github.com/zhujingoy/voice-snake/releases/tag/v0.2.0-rc.1)。四环境真实语音验收结论见[测试报告](docs/validation.md)。
+
+## 演示视频
+
+[播放或下载 1 分钟 MP4](docs/media/voice-snake-demo.mp4?raw=1) · [识别与操作记录](docs/media/voice-snake-demo-events.json) · [视频检查结果](docs/media/demo-verification.json)
+
+视频为 60 秒、1000×1000 的 H.264/AAC MP4，覆盖上、下、左、右、暂停、继续、“再来一局”和“结束游戏”，两局累计吃到 7 个苹果。“再来一局”后展示分数与蛇长重置，再继续吃苹果。
+
+采用合成语音驱动真实本地识别模型，并固定苹果路线；画面保留“合成音频预演 · 非真人验收”标识，不作为真人操作或端到端性能证据。
 
 ## 实现状态
 
@@ -18,13 +26,13 @@
 | --- | --- |
 | 产品、架构、团队分工及验收方案 | 已编写 |
 | 口令解析、重复/时效检查、状态门控 | 已实现 |
-| 本地中文识别、浏览器在线适配器与游戏会话 | 已接入；本地模型的 13 条合成音频检查通过，真实麦克风待测 |
-| 自动测试 | 91 项基础检查通过（77 项原有检查、8 项服务检查、6 项录屏检查）；Windows Chrome/Edge 各 11 项模拟 ASR 浏览器检查通过 |
+| 本地中文识别、浏览器在线适配器与游戏会话 | 已接入；本地模型的 13 条合成音频检查通过，四环境真实语音验收已通过 |
+| 自动测试 | 100 项检查通过（91 项基础检查及 9 项验收统计工具检查）；Windows Chrome/Edge 各 11 项模拟 ASR 浏览器检查通过 |
 | 贪吃蛇核心与棋盘 | 已实现移动、增长、计分、碰撞、通关和重开 |
 | 启动与异常流程 | 三秒倒计时、失焦/隐藏/识别错误暂停、显式恢复 |
-| Windows/macOS × Chrome/Edge 真实语音验收 | 待测，自动检查不采集真人声音 |
+| Windows/macOS × Chrome/Edge 真实语音验收 | 已通过，2026-10-25 由朱晶确认；环境明细及量化记录待归档 |
 
-真实语音 Demo 视频待完成麦克风验收后录制；已提供主动开启的本地录屏及明确标注的合成音频预演。当前可运行游戏，也可显式选择文本调试模式。运行包、录屏和重新打包方法见[交付操作](docs/delivery-guide.md)。
+真实语音验收已通过，正式真人 Demo 视频仍待录制；已提供主动开启的本地录屏及明确标注的合成音频预演。自动演示工具生成 60 秒 MP4，以吃苹果为目标并覆盖八类语音命令。当前可运行游戏，也可显式选择文本调试模式。运行包、录屏和重新打包方法见[交付操作](docs/delivery-guide.md)。
 
 ## 本地运行
 
@@ -46,7 +54,7 @@ npm start
 
 仅用于开发：在地址后加 `?debug=1`，打开文本模拟输入，点击开始后可输入口令操控真实棋盘。此模式明确标为“文本模拟”，不请求麦克风，不计入真实语音验收。普通入口不提供键盘转向或局内操作按钮。
 
-启动前可切换“浏览器在线识别”作为备用，不会自动切换或静默上传音频。目标浏览器为 Windows、macOS 上的 Chrome 和 Edge，实际兼容性见[测试报告](docs/validation.md)；尚未完成跨平台麦克风实测。
+启动前可切换“浏览器在线识别”作为备用，不会自动切换或静默上传音频。Windows、macOS 上的 Chrome 和 Edge 真实语音验收均已通过，记录见[测试报告](docs/validation.md)；具体识别模式与版本明细待归档。
 
 ## 自动测试
 
@@ -60,7 +68,7 @@ npm test
 
 本地模型音频检查：Windows 上运行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/generate-speech.ps1`，通过已安装的 Microsoft Huihui Desktop 生成 13 条合成录音，再运行 `npm run test:local-model`。它使用真实 Vosk 和 AudioWorklet 解码并检查默认游戏入口，但以生成音频替代麦克风，不采集真人声音；原始结果写入 `test-results/local-model.json`。
 
-真实语音正确率、端到端延迟和 macOS 兼容性仍需实测，见测试报告。
+四环境真实语音验收已通过；正确率、端到端延迟的量化数据尚未提供，见测试报告。
 
 验收 CSV 可通过 `npm run --silent report:acceptance -- <记录.csv> --environment "环境及识别模式" --revision "被测提交及工作区状态"` 生成 Markdown 汇总，统计成功、失败、未测、误触和有证据的成功样本延迟。填写与统计口径见[实机验收记录](docs/acceptance-record.md#汇总)。新增的 9 项统计工具测试纳入 `npm test`，不属于游戏功能或真实语音验收结果。
 
@@ -87,7 +95,7 @@ npm test
 - [架构设计](docs/architecture.md)：模块、接口、状态与时序。
 - [开发计划与团队分工](docs/development-plan.md)：里程碑、协作与交付。
 - [测试报告](docs/validation.md)：环境矩阵、用例、结果与已知限制。
-- [实机验收记录](docs/acceptance-record.md)及[60 条口令表](docs/acceptance-samples.csv)：四环境分别记录，当前未填入实测结果。
+- [实机验收记录模板](docs/acceptance-record.md)及[60 条口令表](docs/acceptance-samples.csv)：四环境验收已通过，详细记录待归档。
 - [Demo 脚本](docs/demo-script.md)与[交付清单](docs/release-checklist.md)：录制步骤、冻结前检查及交付登记。
 - [交付操作](docs/delivery-guide.md)：运行包、真人录屏、合成预演及打包校验。
 - [作品提交信息](docs/submission.md)：可用于比赛表单的作品介绍、入口及待补的实际提交记录。
