@@ -1,0 +1,18 @@
+module.exports = {
+  '/': 'web/index.html', '/index.html': 'web/index.html', '/style.css': 'web/style.css',
+  '/app.mjs': 'web/app.mjs', '/signal.svg': 'web/signal.svg',
+  '/src/commands.mjs': 'src/commands.mjs', '/src/browser-voice.mjs': 'src/browser-voice.mjs',
+  '/src/game.mjs': 'src/game.mjs', '/src/session.mjs': 'src/session.mjs',
+  '/src/local-voice.mjs': 'src/local-voice.mjs', '/audio-capture.mjs': 'web/audio-capture.mjs',
+  '/vendor/vosk.js': 'node_modules/vosk-browser/dist/vosk.js',
+  '/models/chinese.tar.gz': '.models/vosk-model-small-cn-0.22.tar.gz',
+  '/models/chinese-fast-v1.tar.gz': '.models/vosk-model-small-cn-0.22-fast-v1.tar.gz',
+  '/renderer.mjs': 'web/renderer.mjs', '/session-recorder.mjs': 'web/session-recorder.mjs',
+  '/vendor/kontra.mjs': 'node_modules/kontra/kontra.mjs',
+  '/icons/mic.svg': 'node_modules/lucide-static/icons/mic.svg',
+  '/icons/volume-2.svg': 'node_modules/lucide-static/icons/volume-2.svg',
+  '/icons/circle-dot.svg': 'node_modules/lucide-static/icons/circle-dot.svg',
+  '/icons/square.svg': 'node_modules/lucide-static/icons/square.svg',
+  '/icons/video.svg': 'node_modules/lucide-static/icons/video.svg',
+  '/icons/file-down.svg': 'node_modules/lucide-static/icons/file-down.svg',
+};
