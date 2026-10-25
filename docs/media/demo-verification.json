@@ -1,0 +1,24 @@
+{
+  "browser": "157.0.8103.15",
+  "media": {
+    "width": 1000,
+    "height": 1000,
+    "checksums": [
+      103027440,
+      103211407,
+      102782863
+    ],
+    "audioSeconds": 59.16,
+    "peak": 0.9099645018577576
+  },
+  "kind": "synthetic",
+  "foodFixture": "scripted apple route",
+  "commands": 8,
+  "applesEaten": 7,
+  "output": {
+    "seconds": 60,
+    "video": "H.264",
+    "audio": "AAC",
+    "decoded": true
+  }
+}
