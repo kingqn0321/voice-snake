@@ -73,6 +73,19 @@ test('public origin requires the authenticated reverse proxy secret', async t =>
   assert.equal(accepted.status, 200); await accepted.text();
 });
 
+test('explicit public mode allows the configured Pages origin with CORS but rejects other origins', async t => {
+  const config = readConfig({ ...env, LINGXI_ALLOWED_ORIGIN: 'https://zhujingoy.github.io', LINGXI_PUBLIC_ACCESS: 'true' });
+  const request = await fixture(t, { config });
+  const preflight = await request({ method: 'OPTIONS', body: undefined,
+    headers: { Origin: 'https://zhujingoy.github.io', 'Access-Control-Request-Method': 'POST' } });
+  assert.equal(preflight.status, 204);
+  assert.equal(preflight.headers.get('access-control-allow-origin'), 'https://zhujingoy.github.io');
+  const accepted = await request({ headers: { Origin: 'https://zhujingoy.github.io' } });
+  assert.equal(accepted.status, 200); assert.equal(accepted.headers.get('access-control-allow-origin'), 'https://zhujingoy.github.io'); await accepted.text();
+  const rejected = await request({ headers: { Origin: 'https://evil.example' } });
+  assert.equal(rejected.status, 403); await rejected.text();
+});
+
 test('provider failure details and credentials never reach the client', async t => {
   const request = await fixture(t, { fetchImpl: async () => new Response(env.LINGXI_API_KEY, { status: 401 }) });
   const response = await request();
