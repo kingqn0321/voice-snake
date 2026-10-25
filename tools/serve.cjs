@@ -27,7 +27,10 @@ const server = http.createServer((request, response) => {
     return;
   }
   let route;
-  try { route = routes[new URL(request.url, 'http://localhost').pathname]; } catch {}
+  try {
+    const pathname = new URL(request.url, 'http://localhost').pathname;
+    if (Object.hasOwn(routes, pathname)) route = routes[pathname];
+  } catch {}
   if (!route) { response.writeHead(404); response.end('Not found'); return; }
   fs.readFile(path.join(root, route), (error, data) => {
     if (error) { response.writeHead(500); response.end('Unable to load asset'); return; }

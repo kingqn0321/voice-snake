@@ -1,0 +1,61 @@
+sample_id,kind,utterance,expected_command,required_state,actual_command,result,confirm_ms,turn_ms,evidence,notes
+V01,valid,上,UP,RUNNING,,,,,,current RIGHT
+V02,valid,上,UP,RUNNING,,,,,,current RIGHT
+V03,valid,上,UP,RUNNING,,,,,,current RIGHT
+V04,valid,上,UP,RUNNING,,,,,,current RIGHT
+V05,valid,向上,UP,RUNNING,,,,,,current RIGHT
+V06,valid,向上,UP,RUNNING,,,,,,current RIGHT
+V07,valid,往上,UP,RUNNING,,,,,,current RIGHT
+V08,valid,往上,UP,RUNNING,,,,,,current RIGHT
+V09,valid,下,DOWN,RUNNING,,,,,,current RIGHT
+V10,valid,下,DOWN,RUNNING,,,,,,current RIGHT
+V11,valid,下,DOWN,RUNNING,,,,,,current RIGHT
+V12,valid,下,DOWN,RUNNING,,,,,,current RIGHT
+V13,valid,向下,DOWN,RUNNING,,,,,,current RIGHT
+V14,valid,向下,DOWN,RUNNING,,,,,,current RIGHT
+V15,valid,往下,DOWN,RUNNING,,,,,,current RIGHT
+V16,valid,往下,DOWN,RUNNING,,,,,,current RIGHT
+V17,valid,左,LEFT,RUNNING,,,,,,current UP
+V18,valid,左,LEFT,RUNNING,,,,,,current UP
+V19,valid,左,LEFT,RUNNING,,,,,,current UP
+V20,valid,左,LEFT,RUNNING,,,,,,current UP
+V21,valid,向左,LEFT,RUNNING,,,,,,current UP
+V22,valid,向左,LEFT,RUNNING,,,,,,current UP
+V23,valid,往左,LEFT,RUNNING,,,,,,current UP
+V24,valid,往左,LEFT,RUNNING,,,,,,current UP
+V25,valid,右,RIGHT,RUNNING,,,,,,current UP
+V26,valid,右,RIGHT,RUNNING,,,,,,current UP
+V27,valid,右,RIGHT,RUNNING,,,,,,current UP
+V28,valid,右,RIGHT,RUNNING,,,,,,current UP
+V29,valid,向右,RIGHT,RUNNING,,,,,,current UP
+V30,valid,向右,RIGHT,RUNNING,,,,,,current UP
+V31,valid,往右,RIGHT,RUNNING,,,,,,current UP
+V32,valid,往右,RIGHT,RUNNING,,,,,,current UP
+V33,valid,暂停,PAUSE,RUNNING,,,,,,
+V34,valid,暂停,PAUSE,RUNNING,,,,,,
+V35,valid,停一下,PAUSE,RUNNING,,,,,,
+V36,valid,停一下,PAUSE,RUNNING,,,,,,
+V37,valid,继续,RESUME,PAUSED,,,,,,
+V38,valid,继续,RESUME,PAUSED,,,,,,
+V39,valid,继续游戏,RESUME,PAUSED,,,,,,
+V40,valid,继续游戏,RESUME,PAUSED,,,,,,
+V41,valid,重新开始,RESTART,RUNNING,,,,,,
+V42,valid,再来一局,RESTART,PAUSED,,,,,,
+V43,valid,重新开始,RESTART,GAME_OVER,,,,,,
+V44,valid,再来一局,RESTART,GAME_OVER,,,,,,
+V45,valid,结束游戏,END,RUNNING,,,,,,
+V46,valid,不玩了,END,RUNNING,,,,,,
+V47,valid,结束游戏,END,PAUSED,,,,,,
+V48,valid,不玩了,END,PAUSED,,,,,,
+V49,valid,结束游戏,END,GAME_OVER,,,,,,
+V50,valid,不玩了,END,GAME_OVER,,,,,,
+N01,negative,不要向左,NONE,RUNNING,,,,,,
+N02,negative,上还是下,NONE,RUNNING,,,,,,
+N03,negative,左边有东西,NONE,RUNNING,,,,,,
+N04,negative,暂停一下再继续,NONE,RUNNING,,,,,,
+N05,negative,左右,NONE,RUNNING,,,,,,
+N06,negative,向右转然后向下,NONE,RUNNING,,,,,,
+N07,negative,今天不错,NONE,RUNNING,,,,,,
+N08,negative,不要结束游戏,NONE,RUNNING,,,,,,
+N09,negative,我说的是右边,NONE,RUNNING,,,,,,
+N10,negative,先别暂停,NONE,RUNNING,,,,,,
