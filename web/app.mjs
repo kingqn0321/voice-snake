@@ -1,11 +1,13 @@
-import { init, GameLoop } from '/vendor/kontra.mjs';
-import { BrowserVoice } from '/src/browser-voice.mjs';
-import { LocalVoice } from '/src/local-voice.mjs';
-import { GameSession } from '/src/session.mjs';
-import { drawBoard } from '/renderer.mjs';
+import { init, GameLoop } from './vendor/kontra.mjs';
+import { BrowserVoice } from './src/browser-voice.mjs';
+import { LocalVoice } from './src/local-voice.mjs';
+import { GameSession } from './src/session.mjs';
+import { drawBoard } from './renderer.mjs';
+import { SessionRecorder } from './session-recorder.mjs';
 
 const $ = (id) => document.getElementById(id);
 const debug = new URLSearchParams(location.search).get('debug') === '1';
+const review = new URLSearchParams(location.search).get('review');
 const labels = { UP: '上', DOWN: '下', LEFT: '左', RIGHT: '右', PAUSE: '暂停', RESUME: '继续', RESTART: '重新开始', END: '结束游戏' };
 const states = { READY: '待启动', RUNNING: '游戏中', PAUSED: '已暂停', GAME_OVER: '已结算', ENDED: '已结束' };
 const reasons = {
@@ -31,6 +33,7 @@ let lastKey = '', current, previousScore = 0;
 let audio;
 let voice;
 let latestQueuedId = null;
+let recorder;
 const canvas = $('board');
 init(canvas);
 
@@ -96,7 +99,7 @@ function renderState(s) {
   $('start').disabled = voiceStarting || s.listening;
   $('start').innerHTML = '';
   const icon = document.createElement('img');
-  icon.src = '/icons/mic.svg'; icon.width = 18; icon.height = 18; icon.alt = '';
+  icon.src = './icons/mic.svg'; icon.width = 18; icon.height = 18; icon.alt = '';
   $('start').append(icon, document.createTextNode(voiceStarting ? '正在连接…' :
     s.listening ? debug ? '文本模拟中' : '语音已连接' : s.state === 'PAUSED' || s.state === 'GAME_OVER' ? '恢复语音通道' : '开始游戏'));
   if (s.lastAppliedId && s.lastAppliedId === latestQueuedId) {
@@ -111,6 +114,7 @@ function renderState(s) {
 const session = new GameSession({
   onChange: renderState,
   onReceipt(input, command, receipt) {
+    recorder?.event('receipt', { resultId: input.resultId, command, ...receipt });
     $('command').textContent = labels[command] || '未识别为口令';
     $('receipt').textContent = reasons[receipt.reason] || receipt.reason;
     latestQueuedId = receipt.reason === 'queued' ? input.resultId : null;
@@ -129,12 +133,14 @@ const session = new GameSession({
 });
 
 function consume(input) {
+  recorder?.event('recognition', { text: input.text, resultId: input.resultId, isFinal: input.isFinal });
   $('interim').textContent = input.text || '—';
   session.receive(input);
 }
 
 const voiceCallbacks = {
   onStatus(status) {
+    if (status === 'stopped') recorder?.stop();
     voiceStarting = status === 'starting' || status === 'microphone';
     $('voice-status').textContent = { starting: $('voice-engine').value === 'local' ? '加载中文模型中' : '连接中',
       microphone: '等待麦克风授权', listening: '正在监听', stopped: '未监听' }[status];
@@ -162,6 +168,38 @@ const localVoice = new LocalVoice({
   },
 });
 voice = localVoice;
+if (review === '1' || review === 'synthetic') {
+  $('review-panel').hidden = false;
+  $('record-kind').textContent = review === 'synthetic' ? '合成音频预演 · 非真人验收' : '麦克风录制 · 本地保存';
+  recorder = new SessionRecorder({
+    board: canvas, snapshot: () => session.snapshot(), kind: review === 'synthetic' ? 'synthetic' : 'microphone',
+    feedback: () => ({ text: $('interim').textContent, command: $('command').textContent, receipt: $('receipt').textContent }),
+    onStatus(status) {
+      $('record-status').textContent = { recording: '录制中', recorded: '录像已生成', failed: '录制失败' }[status];
+      $('record-start').disabled = status === 'recording';
+      $('record-stop').disabled = status !== 'recording';
+      $('record-video').disabled = $('record-report').disabled = status !== 'recorded';
+    },
+  });
+  $('record-start').addEventListener('click', () => {
+    try { recorder.start(localVoice.active?.stream, $('voice-engine').value); }
+    catch (error) { $('record-status').textContent = error.message === 'local_microphone_required'
+      ? '本地麦克风未连接' : '此浏览器无法录制'; }
+  });
+  $('record-stop').addEventListener('click', () => recorder.stop());
+  const download = (blob, filename) => {
+    const url = URL.createObjectURL(blob), anchor = document.createElement('a');
+    anchor.href = url; anchor.download = filename; anchor.click();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+  };
+  $('record-video').addEventListener('click', () => {
+    if (recorder.result) download(recorder.result.video, `voice-snake-${recorder.kind}.webm`);
+  });
+  $('record-report').addEventListener('click', () => {
+    if (recorder.result) download(new Blob([JSON.stringify(recorder.result.report, null, 2)],
+      { type: 'application/json' }), `voice-snake-${recorder.kind}-events.json`);
+  });
+}
 $('voice-engine').addEventListener('change', () => {
   if (voiceStarting || session.listening) return;
   voice = $('voice-engine').value === 'local' ? localVoice : browserVoice;
@@ -214,6 +252,7 @@ const loop = GameLoop({
 });
 loop.start();
 window.addEventListener('pagehide', () => {
+  recorder?.stop();
   session.interrupt('hidden');
   voice.stop();
   loop.stop();

@@ -4,20 +4,7 @@ const path = require('path');
 
 const root = path.resolve(__dirname, '..');
 const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.gz': 'application/gzip', '.svg': 'image/svg+xml' };
-const routes = {
-  '/': 'web/index.html', '/index.html': 'web/index.html', '/style.css': 'web/style.css',
-  '/app.mjs': 'web/app.mjs', '/signal.svg': 'web/signal.svg',
-  '/src/commands.mjs': 'src/commands.mjs', '/src/browser-voice.mjs': 'src/browser-voice.mjs',
-  '/src/game.mjs': 'src/game.mjs', '/src/session.mjs': 'src/session.mjs',
-  '/src/local-voice.mjs': 'src/local-voice.mjs', '/audio-capture.mjs': 'web/audio-capture.mjs',
-  '/vendor/vosk.js': 'node_modules/vosk-browser/dist/vosk.js',
-  '/models/chinese.tar.gz': '.models/vosk-model-small-cn-0.22.tar.gz',
-  '/models/chinese-fast-v1.tar.gz': '.models/vosk-model-small-cn-0.22-fast-v1.tar.gz',
-  '/renderer.mjs': 'web/renderer.mjs',
-  '/vendor/kontra.mjs': 'node_modules/kontra/kontra.mjs',
-  '/icons/mic.svg': 'node_modules/lucide-static/icons/mic.svg',
-  '/icons/volume-2.svg': 'node_modules/lucide-static/icons/volume-2.svg',
-};
+const routes = require('./assets.cjs');
 let port = Number(process.env.PORT || 4173);
 if (!Number.isInteger(port) || port < 1024 || port > 65525) throw new Error('PORT must be between 1024 and 65525');
 const server = http.createServer((request, response) => {
@@ -37,7 +24,7 @@ const server = http.createServer((request, response) => {
     response.writeHead(200, {
       'Content-Type': types[path.extname(route)], 'Cache-Control': 'no-store',
       'X-Content-Type-Options': 'nosniff',
-      'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-eval'; worker-src 'self' blob:; connect-src 'self' blob:; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
+      'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-eval'; worker-src 'self' blob:; connect-src 'self' blob:; media-src 'self' blob:; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
     });
     response.end(request.method === 'HEAD' ? undefined : data);
   });

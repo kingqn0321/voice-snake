@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#148451">
   <title>声控贪吃蛇 · Voice Snake</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <header>
-    <a class="brand" href="/" aria-label="声控贪吃蛇首页"><img src="/signal.svg" width="36" height="36" alt="">声控贪吃蛇</a>
+    <a class="brand" href="./" aria-label="声控贪吃蛇首页"><img src="./signal.svg" width="36" height="36" alt="">声控贪吃蛇</a>
     <span class="edition"><span class="live-dot"></span> VOICE SNAKE / 02</span>
   </header>
   <main>
@@ -35,10 +35,10 @@
         <div class="board-footer"><span><span class="food-dot"></span> 食物 +10</span><span id="state" role="status">待启动</span><span>20 × 20</span></div>
       </section>
       <section class="controls" aria-label="识别状态">
-        <div class="section-label"><h2>语音通道</h2><img src="/icons/mic.svg" width="18" height="18" alt=""></div>
+        <div class="section-label"><h2>语音通道</h2><img src="./icons/mic.svg" width="18" height="18" alt=""></div>
         <label class="engine-picker" for="voice-engine"><span>识别引擎</span><select id="voice-engine"><option value="local">本地中文识别 · 快速</option><option value="browser">浏览器在线识别</option></select></label>
         <div class="status-line"><span class="dot" id="dot"></span><strong id="voice-status" role="status">未启动</strong></div>
-        <button id="start" type="button"><img src="/icons/mic.svg" width="18" height="18" alt=""> 开始游戏</button>
+        <button id="start" type="button"><img src="./icons/mic.svg" width="18" height="18" alt=""> 开始游戏</button>
         <p id="notice" role="status">本地中文模型 · 音频不上传</p>
         <div id="input-level" class="input-level"><label for="mic-level">麦克风电平</label><meter id="mic-level" min="0" max="0.15" value="0" aria-label="麦克风输入电平"></meter><span id="mic-state">未采集</span></div>
         <p class="timing">识别结果 → 转向 <output id="turn-time">—</output></p>
@@ -48,7 +48,18 @@
           <div class="directions"><div data-direction="UP"><b>↑</b><span>上</span></div><div data-direction="LEFT"><b>←</b><span>左</span></div><div data-direction="DOWN"><b>↓</b><span>下</span></div><div data-direction="RIGHT"><b>→</b><span>右</span></div></div>
           <dl><div><dt>暂停 / 继续</dt><dd>“暂停” / “继续”</dd></div><div><dt>新一局</dt><dd>“再来一局”</dd></div><div><dt>结束</dt><dd>“结束游戏”</dd></div></dl>
         </div>
-        <label class="sound-toggle"><span><img src="/icons/volume-2.svg" width="16" height="16" alt=""> 游戏音效</span><input id="sound" type="checkbox" checked></label>
+        <label class="sound-toggle"><span><img src="./icons/volume-2.svg" width="16" height="16" alt=""> 游戏音效</span><input id="sound" type="checkbox" checked></label>
+        <section id="review-panel" class="review-panel" hidden aria-label="验收录制">
+          <h2>验收录制</h2>
+          <p id="record-kind"></p>
+          <div class="record-tools">
+            <button id="record-start" type="button" title="开始录制画面及麦克风" aria-label="开始录制"><img src="./icons/circle-dot.svg" width="18" height="18" alt=""></button>
+            <button id="record-stop" type="button" title="停止录制" aria-label="停止录制" disabled><img src="./icons/square.svg" width="18" height="18" alt=""></button>
+            <button id="record-video" type="button" title="下载录像" aria-label="下载录像" disabled><img src="./icons/video.svg" width="18" height="18" alt=""></button>
+            <button id="record-report" type="button" title="下载事件记录" aria-label="下载事件记录" disabled><img src="./icons/file-down.svg" width="18" height="18" alt=""></button>
+          </div>
+          <output id="record-status" role="status">未录制</output>
+        </section>
         <details id="debug-panel" hidden><summary>开发调试 · 模拟输入</summary>
           <form id="debug"><label for="sample">模拟识别文本</label><div class="sample-row"><input id="sample" autocomplete="off" placeholder="例如：向上" maxlength="100"><button type="submit" aria-label="执行模拟文本" title="执行模拟文本">→</button></div></form>
         </details>
@@ -60,7 +71,7 @@
     </section>
   </main>
   <footer><span>VOICE SNAKE · 2026</span><span id="privacy">本地语音识别 / 不持久化音频</span></footer>
-  <script defer src="/vendor/vosk.js"></script>
-  <script type="module" src="/app.mjs"></script>
+  <script defer src="./vendor/vosk.js"></script>
+  <script type="module" src="./app.mjs"></script>
 </body>
 </html>

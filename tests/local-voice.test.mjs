@@ -44,7 +44,7 @@ function fixture(overrides = {}) {
 await test('local recognition configures mono AGC capture and command grammar', async () => {
   const f = fixture(); assert.equal(await f.voice.start(), true);
   assert.equal(f.context().options.latencyHint, 'interactive');
-  assert.equal(f.modelUrl(), '/models/chinese-fast-v1.tar.gz');
+  assert.equal(f.modelUrl(), new URL('../models/chinese-fast-v1.tar.gz', import.meta.url).href);
   assert.equal(f.constraints().audio.autoGainControl, true);
   assert.equal(f.constraints().audio.noiseSuppression, true);
   assert.ok(f.grammar().includes('左'));
