@@ -10,7 +10,7 @@
 | --- | --- | --- |
 | 可玩版本与本地语音识别 | 已合并 | PR #2，main 合并提交 `760a2f7` |
 | 周日问题修复与自动回归 | 已合并 | PR #3，main 合并提交 `c2f4309` |
-| 验收录屏与交付工具 | 已提交，待合并 | [PR #4](https://github.com/zhujingoy/voice-snake/pull/4)；候选实现提交 `3ecc9a0` |
+| 验收录屏与交付工具 | 已合并 | [PR #4](https://github.com/zhujingoy/voice-snake/pull/4)；候选实现提交 `3ecc9a0` |
 | 干净目录安装、测试及模型准备 | 干净提交 `3ecc9a0` 验证通过 | 91 项基础检查；不等同新电脑或 macOS 验收 |
 | 网页试玩 | 已上线并检查 | [GitHub Pages](https://zhujingoy.github.io/voice-snake/)；模型、AudioWorklet、录制、资源及布局检查通过，音频输入仍为模拟 |
 | 运行包与校验 | 已发布候选版 | [v0.2.0-rc.1](https://github.com/zhujingoy/voice-snake/releases/tag/v0.2.0-rc.1)；两个 ZIP 哈希核对及离线 ZIP 解压后的 91 项检查通过 |
@@ -38,7 +38,7 @@
 | 交付项 | URL 或版本 | 实际验证时间与结果 |
 | --- | --- | --- |
 | 源码仓库 | https://github.com/zhujingoy/voice-snake | 10/25：候选分支与 PR 可访问 |
-| 候选提交 / PR | `3ecc9a0bf550f4910d446913e5c9a22c87b7758d` / PR #4 | 10/25：候选已发布；PR 待合并，后续文档记录不改变运行包提交 |
+| 候选提交 / PR | `3ecc9a0bf550f4910d446913e5c9a22c87b7758d` / PR #4 | 10/25：候选已发布，PR 已合并；后续文档记录不改变运行包提交 |
 | 网页试玩 / 录屏 | https://zhujingoy.github.io/voice-snake/；加 `?review=1` 开启验收录屏入口 | 10/25：公网实际加载及录制启停通过，未使用物理麦克风 |
 | 运行包及校验 | v0.2.0-rc.1 发布附件，`voice-snake-offline.zip`、`voice-snake-site.zip`、`SHA256SUMS.txt` | 10/25：匿名下载返回 200，ZIP 摘要与发布端核对通过 |
 | 运行说明与设计文档 | 仓库 README.md 与 docs/；[交付操作](delivery-guide.md) | 10/25：本地文档链接检查通过，最终合并后复核 |
