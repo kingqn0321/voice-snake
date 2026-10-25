@@ -8,7 +8,8 @@
   "scripts": {
     "setup:voice": "node tools/prepare-model.cjs",
     "start": "node tools/serve.cjs",
-    "test": "node tests/commands.test.mjs && node tests/game.test.mjs && node tests/session.test.mjs && node tests/local-voice.test.mjs && node tests/model-profile.test.cjs && node tests/audio-capture.test.cjs && node --test tests/server.test.cjs tests/recorder.test.mjs",
+    "test": "node tests/commands.test.mjs && node tests/game.test.mjs && node tests/session.test.mjs && node tests/local-voice.test.mjs && node tests/model-profile.test.cjs && node tests/audio-capture.test.cjs && node --test tests/server.test.cjs tests/recorder.test.mjs tests/acceptance-report.test.cjs",
+    "report:acceptance": "node tools/summarize-acceptance.cjs",
     "test:local-model": "node tests/local-model.test.cjs",
     "verify:clean": "node tools/verify-clean.cjs",
     "package:delivery": "node tools/package-delivery.cjs",

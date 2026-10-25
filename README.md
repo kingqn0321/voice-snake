@@ -62,6 +62,8 @@ npm test
 
 真实语音正确率、端到端延迟和 macOS 兼容性仍需实测，见测试报告。
 
+验收 CSV 可通过 `npm run --silent report:acceptance -- <记录.csv> --environment "环境及识别模式" --revision "被测提交及工作区状态"` 生成 Markdown 汇总，统计成功、失败、未测、误触和有证据的成功样本延迟。填写与统计口径见[实机验收记录](docs/acceptance-record.md#汇总)。新增的 9 项统计工具测试纳入 `npm test`，不属于游戏功能或真实语音验收结果。
+
 ## 隐私与运行条件
 
 默认本地识别在浏览器 Worker 内处理音频，不需要 API 密钥，运行时不上传音频；中文模型来自 Vosk 发布方，下载与打包脚本见 `tools/prepare-model.cjs`，产物保存在忽略目录 `.models/`。脚本保留模型权重，仅通过 `tools/voice-profile.cjs` 设置 `frames-per-chunk=6`，输出带 `fast-v1` 版本名的归档，避免使用旧模型缓存；已有原始归档时本地重打包，无需重复下载。首次加载后 Vosk 会将模型缓存到浏览器 IndexedDB（不是音频或识别日志）。浏览器在线备用通道可能由厂商处理音频，可用性受网络、地区及浏览器策略影响。默认不持久化音频或识别日志。仅在 `?review=1` 入口主动点击录制后，录像及事件保存在页面内存，用户可下载为本地文件，不自动上传；普通入口没有录屏控件。
