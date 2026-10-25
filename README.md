@@ -12,7 +12,9 @@
 
 ## 演示视频
 
-[播放或下载 1 分钟 MP4](docs/media/voice-snake-demo.mp4?raw=1) · [识别与操作记录](docs/media/voice-snake-demo-events.json) · [视频检查结果](docs/media/demo-verification.json)
+演示视频路径（相对于仓库根目录）：`docs/media/voice-snake-demo.mp4`
+
+[识别与操作记录](docs/media/voice-snake-demo-events.json) · [视频检查结果](docs/media/demo-verification.json)
 
 视频为 60 秒、1000×1000 的 H.264/AAC MP4，覆盖上、下、左、右、暂停、继续、“再来一局”和“结束游戏”，两局累计吃到 7 个苹果。“再来一局”后展示分数与蛇长重置，再继续吃苹果。
 
